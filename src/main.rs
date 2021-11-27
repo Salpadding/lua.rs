@@ -1,3 +1,4 @@
+#![allow(warnings, unused)]
 macro_rules! err {
     ($($arg:tt)*) => {{
         let res = format!($($arg)*);
@@ -6,6 +7,8 @@ macro_rules! err {
 }
 mod chunk;
 mod cursor;
+mod runtime;
+mod ins;
 
 fn main() {
     println!("Hello, world!");

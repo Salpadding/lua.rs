@@ -1,6 +1,8 @@
 use crate::cursor::{Cursor, FromCursor};
 use anyhow::Result;
+use crate::chunk::opcode::FatIns;
 use crate::chunk::proto::LCons::Long;
+use std::sync::Arc;
 
 pub mod cons_tag {
     pub const NIL: u8 = 0;
@@ -69,23 +71,23 @@ impl FromCursor for UpValue {
 }
 
 #[derive(Debug, Default)]
-pub struct Prototype {
-    source: String,
-    line_defined: u32,
-    last_line: u32,
-    num_params: u8,
-    var_arg: bool,
-    max_stack: u8,
-    code: Vec<u32>,
-    cons: Vec<LCons>,
-    up_values: Vec<UpValue>,
-    protos: Vec<Prototype>,
-    line_info: Vec<u32>,
-    local_vars: Vec<u32>,
-    up_value_names: Vec<String>,
+pub struct ProtoType {
+    pub source: String,
+    pub line_defined: u32,
+    pub last_line: u32,
+    pub num_params: u8,
+    pub var_arg: bool,
+    pub max_stack: u8,
+    pub code: Vec<FatIns>,
+    pub cons: Vec<LCons>,
+    pub up_values: Vec<UpValue>,
+    pub protos: Vec<Arc<ProtoType>>,
+    pub line_info: Vec<u32>,
+    pub local_vars: Vec<u32>,
+    pub up_value_names: Vec<String>,
 }
 
-impl FromCursor for Prototype {
+impl FromCursor for ProtoType {
     fn from_cursor(cur: &mut Cursor) -> Result<Self> {
         let r: Self = Self {
             source: cur.read_as()?,
