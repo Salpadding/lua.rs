@@ -10,6 +10,8 @@ mod cursor;
 mod runtime;
 mod ins;
 
+pub type XRc<T> = std::rc::Rc<T>;
+
 fn main() {
     println!("Hello, world!");
 }

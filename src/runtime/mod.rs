@@ -1,3 +1,5 @@
+use crate::XRc;
+
 mod lvalue;
 pub mod stack;
 pub mod state;
@@ -10,14 +12,22 @@ pub enum LValue {
     Bool(bool),
     F64(f64),
     I64(i64),
-    String(String),
+    String(XRc<String>),
     Table,
-    Function
+    Function,
+}
+
+impl LValue {
+    pub fn take(&mut self) -> LValue {
+        let mut r = LValue::Nil;
+        std::mem::swap(&mut r, &mut self);
+        r
+    }
 }
 
 impl Default for LValue {
     fn default() -> Self {
-       Self::None
+        Self::None
     }
 }
 

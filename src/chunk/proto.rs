@@ -1,8 +1,11 @@
-use crate::cursor::{Cursor, FromCursor};
+use std::sync::Arc;
+
 use anyhow::Result;
+
 use crate::chunk::opcode::FatIns;
 use crate::chunk::proto::LCons::Long;
-use std::sync::Arc;
+use crate::cursor::{Cursor, FromCursor};
+use crate::XRc;
 
 pub mod cons_tag {
     pub const NIL: u8 = 0;
@@ -22,19 +25,19 @@ pub struct LocalVar {
 
 impl FromCursor for LocalVar {
     fn from_cursor(cur: &mut Cursor) -> Result<Self> {
-       Ok(
-           Self {
-               name: cur.read_as()?,
-               start_pc: cur.u32(),
-               end_pc: cur.u32(),
-           }
-       )
+        Ok(
+            Self {
+                name: cur.read_as()?,
+                start_pc: cur.u32(),
+                end_pc: cur.u32(),
+            }
+        )
     }
 }
 
 #[derive(Debug)]
 pub enum LCons {
-    String { tag: u8, data: String },
+    String { tag: u8, data: XRc<String> },
     Long { tag: u8, data: u64 },
 }
 
@@ -61,12 +64,12 @@ pub struct UpValue {
 
 impl FromCursor for UpValue {
     fn from_cursor(cur: &mut Cursor) -> Result<Self> {
-       Ok(
-           Self {
-               in_stack: cur.u8(),
-               idx: cur.u8(),
-           }
-       )
+        Ok(
+            Self {
+                in_stack: cur.u8(),
+                idx: cur.u8(),
+            }
+        )
     }
 }
 
@@ -81,7 +84,7 @@ pub struct ProtoType {
     pub code: Vec<FatIns>,
     pub cons: Vec<LCons>,
     pub up_values: Vec<UpValue>,
-    pub protos: Vec<Arc<ProtoType>>,
+    pub protos: Vec<XRc<ProtoType>>,
     pub line_info: Vec<u32>,
     pub local_vars: Vec<u32>,
     pub up_value_names: Vec<String>,

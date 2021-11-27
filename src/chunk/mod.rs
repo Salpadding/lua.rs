@@ -1,3 +1,14 @@
+use std::io::Read;
+use std::rc::Rc;
+use std::sync::Arc;
+
+use anyhow::Result;
+
+use crate::chunk::header::Header;
+use crate::chunk::proto::ProtoType;
+use crate::cursor::{Cursor, FromCursor};
+use crate::XRc;
+
 macro_rules! asf {
     ($x: ident, $f: ident, $ex: expr) => {
         {
@@ -12,17 +23,10 @@ pub mod proto;
 mod header;
 pub mod opcode;
 
-use std::io::Read;
-use crate::cursor::{Cursor, FromCursor};
-use anyhow::Result;
-use crate::chunk::header::Header;
-use crate::chunk::proto::ProtoType;
-use std::sync::Arc;
-
 #[derive(Debug)]
 pub struct Chunk {
     pub header: Header,
-    pub proto: Arc<ProtoType>,
+    pub proto: XRc<ProtoType>,
 }
 
 impl FromCursor for Chunk {
@@ -45,9 +49,17 @@ impl<T: FromCursor> FromCursor for Arc<T> {
     }
 }
 
+impl<T: FromCursor> FromCursor for Rc<T> {
+    fn from_cursor(cur: &mut Cursor) -> Result<Self> {
+        let r: T = cur.read_as()?;
+        Ok(Rc::new(r))
+    }
+}
+
 #[cfg(test)]
 mod test {
     use std::io::Read;
+
     use crate::chunk::Chunk;
     use crate::chunk::header::Header;
     use crate::cursor::Cursor;

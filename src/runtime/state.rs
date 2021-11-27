@@ -1,17 +1,19 @@
-use crate::chunk::Chunk;
-use crate::runtime::stack::LStack;
 use std::sync::Arc;
+
+use crate::chunk::Chunk;
 use crate::chunk::opcode::FatIns;
 use crate::chunk::proto::ProtoType;
+use crate::runtime::stack::LStack;
+use crate::XRc;
 
 pub struct LState {
     stack: LStack,
-    proto: Arc<ProtoType>,
+    proto: XRc<ProtoType>,
     pc: usize,
 }
 
 impl LState {
-    pub fn new(stack_size: usize, proto: Arc<ProtoType>) -> Self {
+    pub fn new(stack_size: usize, proto: XRc<ProtoType>) -> Self {
         Self {
             stack: LStack::new(stack_size),
             proto,

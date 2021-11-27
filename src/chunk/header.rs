@@ -1,3 +1,5 @@
+use con::*;
+
 use crate::cursor::FromCursor;
 
 mod con {
@@ -5,8 +7,6 @@ mod con {
     pub const LUAC_DATA: [u8; 6] = [0x19, 0x93, 0x0d, 0x0a, 0x1a, 0x0a];
     pub const LUAC_INT: u64 = 0x5678;
 }
-
-use con::*;
 
 #[derive(Default, Debug)]
 pub struct Header {

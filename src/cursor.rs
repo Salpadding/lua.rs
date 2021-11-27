@@ -74,7 +74,7 @@ pub trait FromCursor: Sized {
 
 impl FromCursor for u32 {
     fn from_cursor(cur: &mut Cursor) -> Result<Self> {
-       Ok(cur.u32())
+        Ok(cur.u32())
     }
 }
 

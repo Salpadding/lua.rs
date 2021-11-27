@@ -1,4 +1,5 @@
 use num_derive::FromPrimitive;
+
 use crate::cursor::{Cursor, FromCursor};
 
 #[derive(Debug, Clone, Copy)]
